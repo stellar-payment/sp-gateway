@@ -1,0 +1,14 @@
+version: '3.5'
+services:
+  backend:
+    container_name: sp-gateway
+    image: "stellar-payment/sp-gateway:$BUILD_TAG"
+    build: 
+      context: .
+      args:
+        USERNAME_GITHUB: 
+        TOKEN_GITHUB: 
+        BUILD_TAG: $BUILD_TAG 
+        BUILD_TIMESTAMP: $BUILD_TIMESTAMP
+    ports:
+      - "7000:7780"    
