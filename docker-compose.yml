@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   backend:
-    container_name: sp-gateway
+    container_name: sp-gateway-backend
     image: "stellar-payment/sp-gateway:$BUILD_TAG"
     build: 
       context: .

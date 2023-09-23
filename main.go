@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/nmluci/go-backend/cmd/webservice"
-	"github.com/nmluci/go-backend/internal/component"
-	"github.com/nmluci/go-backend/internal/config"
-	"github.com/nmluci/go-backend/pkg/initutil"
+	"github.com/stellar-payment/sp-gateway/cmd/webservice"
+	"github.com/stellar-payment/sp-gateway/internal/component"
+	"github.com/stellar-payment/sp-gateway/internal/config"
+	"github.com/stellar-payment/sp-gateway/pkg/initutil"
 )
 
 var (

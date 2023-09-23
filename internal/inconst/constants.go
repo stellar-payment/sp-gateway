@@ -1,4 +1,4 @@
-package commonkey
+package inconst
 
 type CtxKey string
 

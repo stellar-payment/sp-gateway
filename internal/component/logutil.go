@@ -7,9 +7,9 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/nmluci/go-backend/internal/config"
-	"github.com/nmluci/go-backend/internal/util/timeutil"
 	"github.com/rs/zerolog"
+	"github.com/stellar-payment/sp-gateway/internal/config"
+	"github.com/stellar-payment/sp-gateway/internal/util/timeutil"
 )
 
 type NewLoggerParams struct {

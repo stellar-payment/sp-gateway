@@ -1,8 +1,8 @@
-package apiutil
+package svcutil
 
 import (
+	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -29,13 +29,20 @@ func (t *Transport) RoundTrip(r *http.Request) (*http.Response, error) {
 	}
 }
 
+type SendReqeuestParams struct {
+	Endpoint string
+	Method   string
+	Headers  map[string]string
+	Body     string
+}
+
 // Actual API
-type Requester[T any] struct {
+type Requester struct {
 	Client http.Client
 }
 
-func NewRequester[T any]() Requester[T] {
-	t := Requester[T]{
+func NewRequester() Requester {
+	t := Requester{
 		Client: http.Client{
 			Transport: &Transport{base: http.DefaultTransport, limiter: rate.NewLimiter(rate.Limit(50), 1)},
 		},
@@ -43,8 +50,8 @@ func NewRequester[T any]() Requester[T] {
 	return t
 }
 
-func (r *Requester[T]) SendRequest(ctx context.Context, endpoint string, method string, params map[string]string, body io.Reader) (res *T, err error) {
-	req, err := http.NewRequestWithContext(ctx, method, endpoint, body)
+func (r *Requester) SendRequest(ctx context.Context, params SendReqeuestParams) (res string, err error) {
+	req, err := http.NewRequestWithContext(ctx, params.Method, params.Endpoint, bytes.NewBuffer([]byte(params.Body)))
 	if err != nil {
 		return
 	}
@@ -52,14 +59,11 @@ func (r *Requester[T]) SendRequest(ctx context.Context, endpoint string, method 
 	req.Header.Add("User-Agent", "Stellar-Microservice by Misaki-chan")
 	req.Header.Add("Content-Type", "application/json")
 
-	queryParam := req.URL.Query()
-	for k, v := range params {
-		queryParam.Add(k, v)
+	for k, v := range params.Headers {
+		req.Header.Add(k, v)
 	}
 
-	req.URL.RawQuery = queryParam.Encode()
-
-	fmt.Println(method, endpoint)
+	fmt.Println(params.Method, params.Endpoint)
 	data, err := r.Client.Do(req)
 	if err != nil {
 		return
@@ -67,13 +71,13 @@ func (r *Requester[T]) SendRequest(ctx context.Context, endpoint string, method 
 
 	defer data.Body.Close()
 	if data.StatusCode < 200 || data.StatusCode > 299 {
-		return nil, fmt.Errorf("failed to process request, got: %s", data.Status)
+		return "", fmt.Errorf("failed to process request, got: %s", data.Status)
 	}
 
-	err = json.NewDecoder(data.Body).Decode(res)
+	body, err := io.ReadAll(data.Body)
 	if err != nil {
-		return
+		return "", fmt.Errorf("failed to read response body")
 	}
 
-	return
+	return string(body), nil
 }

@@ -20,7 +20,8 @@ type Config struct {
 	FilePath  string
 	RunSince  time.Time
 
-	RedisConfig RedisConfig `json:"redisConfig"`
+	RedisConfig       RedisConfig `json:"redisConfig"`
+	PassthroughConfig PassthroughConfig
 }
 
 const logTagConfig = "[Init Config]"
@@ -39,6 +40,11 @@ func Init(buildTime, buildVer string) {
 			Address:  os.Getenv("REDIS_ADDRESS"),
 			Port:     os.Getenv("REDIS_PORT"),
 			Password: os.Getenv("REDIS_PASSWORD"),
+		},
+		PassthroughConfig: PassthroughConfig{
+			SecurityPath: os.Getenv("SP_SECURITY_PATH"),
+			AccountPath:  os.Getenv("SP_ACCOUNT_PATH"),
+			PaymentPath:  os.Getenv("SP_PAYMENT_PATH"),
 		},
 		BuildVer:  buildVer,
 		BuildTime: buildTime,

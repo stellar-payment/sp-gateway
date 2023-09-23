@@ -1,6 +1,8 @@
 package router
 
 const (
-	basePath = "/v1"
+	basePath = "/api/v1"
 	PingPath = basePath + "/ping"
+
+	passthroughPath = "/api/:svc/:path"
 )

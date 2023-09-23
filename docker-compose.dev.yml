@@ -1,8 +1,8 @@
 version: '3.5'
 services:
   backend:
-    container_name: sp-gateway
-    image: stellar-payment/sp-gateway:v0.0.1-local
+    container_name: sp-gateway-backend
+    image: stellar-payment/sp-gateway-be:v0.0.1-local
     build: 
       context: .
       args:

@@ -2,11 +2,11 @@ package webservice
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/nmluci/go-backend/cmd/webservice/router"
-	"github.com/nmluci/go-backend/internal/config"
-	"github.com/nmluci/go-backend/internal/repository"
-	"github.com/nmluci/go-backend/internal/service"
 	"github.com/rs/zerolog"
+	"github.com/stellar-payment/sp-gateway/cmd/webservice/router"
+	"github.com/stellar-payment/sp-gateway/internal/config"
+	"github.com/stellar-payment/sp-gateway/internal/repository"
+	"github.com/stellar-payment/sp-gateway/internal/service"
 )
 
 const logTagStartWebservice = "[StartWebservice]"

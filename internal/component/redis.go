@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/nmluci/go-backend/internal/config"
 	"github.com/rs/zerolog"
+	"github.com/stellar-payment/sp-gateway/internal/config"
 )
 
 type InitRedisParams struct {

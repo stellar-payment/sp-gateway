@@ -1,12 +1,16 @@
 package service
 
 import (
-	"github.com/nmluci/go-backend/internal/repository"
-	"github.com/nmluci/go-backend/pkg/dto"
+	"context"
+
+	"github.com/stellar-payment/sp-gateway/internal/repository"
+	"github.com/stellar-payment/sp-gateway/pkg/dto"
 )
 
 type Service interface {
 	Ping() (pingResponse dto.PublicPingResponse)
+
+	PassthroughV1Request(context.Context, *dto.PassthroughPayload) (*dto.PassthroughResponse, error)
 }
 
 type service struct {

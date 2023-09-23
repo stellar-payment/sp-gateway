@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/nmluci/go-backend/pkg/dto"
-	"github.com/nmluci/go-backend/pkg/errs"
+	"github.com/stellar-payment/sp-gateway/pkg/dto"
+	"github.com/stellar-payment/sp-gateway/pkg/errs"
 )
 
 func WriteSuccessResponse(ec echo.Context, data interface{}) error {
@@ -13,6 +13,14 @@ func WriteSuccessResponse(ec echo.Context, data interface{}) error {
 		Data:   data,
 		Errors: nil,
 	})
+}
+
+func WritePassthroughResponse(ec echo.Context, data interface{}, header map[string]string) error {
+	for k, v := range header {
+		ec.Response().Header().Set(k, v)
+	}
+
+	return WriteSuccessResponse(ec, data)
 }
 
 func WriteErrorResponse(ec echo.Context, err error) error {

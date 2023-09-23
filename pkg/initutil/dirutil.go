@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/nmluci/go-backend/internal/config"
+	"github.com/stellar-payment/sp-gateway/internal/config"
 )
 
 func InitDirectory() {

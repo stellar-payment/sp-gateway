@@ -3,7 +3,7 @@ package service
 import (
 	"time"
 
-	"github.com/nmluci/go-backend/pkg/dto"
+	"github.com/stellar-payment/sp-gateway/pkg/dto"
 )
 
 func (s *service) Ping() (pingResponse dto.PublicPingResponse) {

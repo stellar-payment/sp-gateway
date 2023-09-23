@@ -3,14 +3,14 @@ package ctxutil
 import (
 	"context"
 
-	"github.com/nmluci/go-backend/internal/commonkey"
+	"github.com/stellar-payment/sp-gateway/internal/inconst"
 )
 
-func WrapCtx(ctx context.Context, key commonkey.CtxKey, val interface{}) context.Context {
+func WrapCtx(ctx context.Context, key inconst.CtxKey, val interface{}) context.Context {
 	return context.WithValue(ctx, key, val)
 }
 
-func GetCtx[T any](ctx context.Context, key commonkey.CtxKey) (res T) {
+func GetCtx[T any](ctx context.Context, key inconst.CtxKey) (res T) {
 	val := ctx.Value(key)
 	res, _ = val.(T)
 

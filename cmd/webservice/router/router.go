@@ -4,11 +4,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	ecMiddleware "github.com/labstack/echo/v4/middleware"
-	"github.com/nmluci/go-backend/cmd/webservice/handler"
-	"github.com/nmluci/go-backend/internal/config"
-	"github.com/nmluci/go-backend/internal/middleware"
-	"github.com/nmluci/go-backend/internal/service"
 	"github.com/rs/zerolog"
+	"github.com/stellar-payment/sp-gateway/cmd/webservice/handler"
+	"github.com/stellar-payment/sp-gateway/internal/config"
+	"github.com/stellar-payment/sp-gateway/internal/middleware"
+	"github.com/stellar-payment/sp-gateway/internal/service"
 )
 
 type InitRouterParams struct {
@@ -28,4 +28,6 @@ func Init(params *InitRouterParams) {
 	)
 
 	params.Ec.GET(PingPath, handler.HandlePing(params.Service.Ping))
+
+	params.Ec.Any(passthroughPath, handler.HandlePassthroughV1(params.Service.PassthroughV1Request))
 }

@@ -5,8 +5,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/nmluci/go-backend/internal/config"
 	"github.com/rs/zerolog"
+	"github.com/stellar-payment/sp-gateway/internal/config"
+	"github.com/stellar-payment/sp-gateway/internal/inconst"
 )
 
 func HandlerLogger(logger *zerolog.Logger) echo.MiddlewareFunc {
@@ -14,7 +15,9 @@ func HandlerLogger(logger *zerolog.Logger) echo.MiddlewareFunc {
 		return func(c echo.Context) error {
 			l := logger.With().Logger()
 			l.UpdateContext(func(cl zerolog.Context) zerolog.Context {
-				return cl.Str("request-id", c.Response().Header().Get(echo.HeaderXRequestID))
+				return cl.
+					Str("request-id", c.Response().Header().Get(inconst.HeaderXRequestID)).
+					Str("correlation-id", c.Response().Header().Get(inconst.HeaderXCorrelationID))
 			})
 
 			c.SetRequest(c.Request().WithContext(l.WithContext(c.Request().Context())))
@@ -29,6 +32,7 @@ func RequestLogger(logger *zerolog.Logger) echo.MiddlewareFunc {
 		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
 			logger.Info().
 				Str("request-id", c.Response().Header().Get(echo.HeaderXRequestID)).
+				Str("correlation-id", c.Response().Header().Get(inconst.HeaderXCorrelationID)).
 				Str("latency", v.Latency.String()).
 				Str("protocol", v.Protocol).
 				Str("remoteIP", v.RemoteIP).
@@ -67,7 +71,8 @@ func RequestBodyLogger(logger *zerolog.Logger) echo.MiddlewareFunc {
 
 		Handler: func(c echo.Context, in []byte, out []byte) {
 			logger.Info().
-				Str("request-id", c.Response().Header().Get(echo.HeaderXRequestID)).
+				Str("request-id", c.Request().Header.Get(echo.HeaderXRequestID)).
+				Str("correlation-id", c.Request().Header.Get(inconst.HeaderXCorrelationID)).
 				Any("request-header", c.Request().Header).Send()
 			if string(in) != "" {
 				logger.Info().
@@ -77,18 +82,21 @@ func RequestBodyLogger(logger *zerolog.Logger) echo.MiddlewareFunc {
 
 			logger.Info().
 				Str("request-id", c.Response().Header().Get(echo.HeaderXRequestID)).
+				Str("correlation-id", c.Response().Header().Get(inconst.HeaderXCorrelationID)).
 				Any("response-header", c.Response().Header()).Send()
 			if string(out) != "" {
 				if !strings.Contains(c.Response().Header().Get("Content-Type"), "application/json") {
 					// if c.Response().Header().Get("Content-Type") != "application/json" {
 					logger.Info().
 						Str("request-id", c.Response().Header().Get(echo.HeaderXRequestID)).
+						Str("correlation-id", c.Response().Header().Get(inconst.HeaderXCorrelationID)).
 						Str("response-body", "<non-json response>").Send()
+
 				} else {
 					logger.Info().
 						Str("request-id", c.Response().Header().Get(echo.HeaderXRequestID)).
+						Str("correlation-id", c.Response().Header().Get(inconst.HeaderXCorrelationID)).
 						RawJSON("response-body", out).Send()
-
 				}
 
 			}
