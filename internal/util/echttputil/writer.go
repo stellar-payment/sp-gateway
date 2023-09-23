@@ -20,7 +20,7 @@ func WritePassthroughResponse(ec echo.Context, data string, header map[string]st
 		ec.Response().Header().Set(k, v)
 	}
 
-	ec.Response().Header().Set(echo.HeaderContentType, "application/json")
+	ec.Response().Header().Set(echo.HeaderContentType, "application/json; charset=UTF-8")
 	return ec.String(200, data)
 }
 
