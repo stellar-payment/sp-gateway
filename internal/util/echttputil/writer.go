@@ -15,12 +15,12 @@ func WriteSuccessResponse(ec echo.Context, data interface{}) error {
 	})
 }
 
-func WritePassthroughResponse(ec echo.Context, data interface{}, header map[string]string) error {
+func WritePassthroughResponse(ec echo.Context, data string, header map[string]string) error {
 	for k, v := range header {
 		ec.Response().Header().Set(k, v)
 	}
 
-	return WriteSuccessResponse(ec, data)
+	return ec.String(200, data)
 }
 
 func WriteErrorResponse(ec echo.Context, err error) error {
