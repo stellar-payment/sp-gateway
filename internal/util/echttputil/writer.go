@@ -15,13 +15,13 @@ func WriteSuccessResponse(ec echo.Context, data interface{}) error {
 	})
 }
 
-func WritePassthroughResponse(ec echo.Context, data string, header map[string]string) error {
-	for k, v := range header {
+func WritePassthroughResponse(ec echo.Context, res *dto.PassthroughResponse) error {
+	for k, v := range res.Headers {
 		ec.Response().Header().Set(k, v)
 	}
 
 	ec.Response().Header().Set(echo.HeaderContentType, "application/json; charset=UTF-8")
-	return ec.String(200, data)
+	return ec.String(res.Status, res.Payload)
 }
 
 func WriteErrorResponse(ec echo.Context, err error) error {

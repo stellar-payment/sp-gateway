@@ -12,6 +12,7 @@ type PassthroughPayload struct {
 }
 
 type PassthroughResponse struct {
+	Status  int
 	Payload string
 	Headers map[string]string
 }

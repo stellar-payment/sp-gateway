@@ -50,7 +50,7 @@ func NewRequester() Requester {
 	return t
 }
 
-func (r *Requester) SendRequest(ctx context.Context, params SendReqeuestParams) (res string, err error) {
+func (r *Requester) SendRequest(ctx context.Context, params SendReqeuestParams) (status int, res string, err error) {
 	req, err := http.NewRequestWithContext(ctx, params.Method, params.Endpoint, bytes.NewBuffer([]byte(params.Body)))
 	if err != nil {
 		return
@@ -69,14 +69,10 @@ func (r *Requester) SendRequest(ctx context.Context, params SendReqeuestParams) 
 	}
 
 	defer data.Body.Close()
-	if data.StatusCode < 200 || data.StatusCode > 299 {
-		return "", fmt.Errorf("failed to process request, got: %s", data.Status)
-	}
-
 	body, err := io.ReadAll(data.Body)
 	if err != nil {
-		return "", fmt.Errorf("failed to read response body")
+		return http.StatusInternalServerError, "", fmt.Errorf("failed to read response body")
 	}
 
-	return string(body), nil
+	return data.StatusCode, string(body), nil
 }

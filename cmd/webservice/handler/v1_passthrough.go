@@ -35,6 +35,6 @@ func HandlePassthroughV1(handler PassthroughV1Handler) echo.HandlerFunc {
 			return echttputil.WriteErrorResponse(c, err)
 		}
 
-		return echttputil.WritePassthroughResponse(c, res.Payload, res.Headers)
+		return echttputil.WritePassthroughResponse(c, res)
 	}
 }

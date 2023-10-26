@@ -123,13 +123,14 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 	headers["x-correlation-id"] = payload.CorrelationID
 
 	caller := svcutil.NewRequester()
-	apires, err := caller.SendRequest(ctx, params)
+	status, apires, err := caller.SendRequest(ctx, params)
 	if err != nil {
 		logger.Error().Err(err).Msg("failed to send request")
 		return
 	}
 
 	res = &dto.PassthroughResponse{
+		Status:  status,
 		Payload: apires,
 		Headers: headers,
 	}
