@@ -101,7 +101,8 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 		basePath = conf.PassthroughConfig.PaymentPath
 	}
 
-	if payload.ServiceName == inconst.SVC_ACCOUNT || payload.ServiceName == inconst.SVC_PAYMENT {
+	// Todo: add per-path whitelist
+	if payload.ServiceName == inconst.SVC_PAYMENT {
 		var inres string
 		inres, err = decryptRequest(ctx, payload)
 		if err != nil {
@@ -133,7 +134,7 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 		Headers: headers,
 	}
 
-	if payload.ServiceName == inconst.SVC_ACCOUNT || payload.ServiceName == inconst.SVC_PAYMENT {
+	if payload.ServiceName == inconst.SVC_PAYMENT {
 		var outres, sk string
 		outres, sk, err = encryptRequest(ctx, structutil.StringToUint64(payload.PartnerID), apires)
 		if err != nil {
