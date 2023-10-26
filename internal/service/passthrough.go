@@ -101,16 +101,16 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 	}
 
 	// Todo: add per-path whitelist
-	if payload.ServiceName == inconst.SVC_PAYMENT {
-		var inres string
-		inres, err = decryptRequest(ctx, payload)
-		if err != nil {
-			logger.Error().Err(err).Send()
-			return
-		}
+	// if payload.ServiceName == inconst.SVC_PAYMENT {
+	// 	var inres string
+	// 	inres, err = decryptRequest(ctx, payload)
+	// 	if err != nil {
+	// 		logger.Error().Err(err).Send()
+	// 		return
+	// 	}
 
-		payload.Payload = inres
-	}
+	// 	payload.Payload = inres
+	// }
 
 	params := &svcutil.SendRequestParams{
 		Endpoint: fmt.Sprintf("%s/%s/api/%s", basePath, payload.ServiceName, payload.EndpointPath),
@@ -140,17 +140,17 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 		res.Headers[k] = strings.Join(v, ",")
 	}
 
-	if payload.ServiceName == inconst.SVC_PAYMENT {
-		var outres, sk string
-		outres, sk, err = encryptRequest(ctx, structutil.StringToUint64(res.Headers[inconst.HeaderXPartnerID]), res.Payload)
-		if err != nil {
-			logger.Error().Err(err).Send()
-			return
-		}
+	// if payload.ServiceName == inconst.SVC_PAYMENT {
+	// 	var outres, sk string
+	// 	outres, sk, err = encryptRequest(ctx, structutil.StringToUint64(res.Headers[inconst.HeaderXPartnerID]), res.Payload)
+	// 	if err != nil {
+	// 		logger.Error().Err(err).Send()
+	// 		return
+	// 	}
 
-		res.Payload = outres
-		res.Headers["x-sec-keypair"] = sk
-	}
+	// 	res.Payload = outres
+	// 	res.Headers["x-sec-keypair"] = sk
+	// }
 
 	return
 }
