@@ -59,7 +59,6 @@ func (r *Requester[T]) SendRequest(ctx context.Context, endpoint string, method 
 
 	req.URL.RawQuery = queryParam.Encode()
 
-	fmt.Println(method, endpoint)
 	data, err := r.Client.Do(req)
 	if err != nil {
 		return

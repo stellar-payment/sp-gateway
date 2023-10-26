@@ -63,7 +63,6 @@ func (r *Requester) SendRequest(ctx context.Context, params SendReqeuestParams) 
 		req.Header.Add(k, v)
 	}
 
-	fmt.Println(params.Method, params.Endpoint)
 	data, err := r.Client.Do(req)
 	if err != nil {
 		return
