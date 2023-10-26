@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -91,8 +92,6 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 
 	var basePath string
 	switch payload.ServiceName {
-	case inconst.SVC_AUTH:
-		basePath = conf.PassthroughConfig.AuthPath
 	case inconst.SVC_ACCOUNT:
 		basePath = conf.PassthroughConfig.AccountPath
 	case inconst.SVC_SECURITY:
@@ -114,7 +113,7 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 	}
 
 	params := &svcutil.SendRequestParams{
-		Endpoint: basePath + payload.EndpointPath,
+		Endpoint: fmt.Sprintf("%s/%s/api/%s", basePath, payload.ServiceName, payload.EndpointPath),
 		Method:   payload.RequestMethod,
 		Body:     payload.Payload,
 	}
