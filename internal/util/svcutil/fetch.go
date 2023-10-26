@@ -29,11 +29,17 @@ func (t *Transport) RoundTrip(r *http.Request) (*http.Response, error) {
 	}
 }
 
-type SendReqeuestParams struct {
+type SendRequestParams struct {
 	Endpoint string
 	Method   string
 	Headers  map[string]string
 	Body     string
+}
+
+type APIResponse struct {
+	Status  int
+	Payload string
+	Headers map[string][]string
 }
 
 // Actual API
@@ -50,7 +56,7 @@ func NewRequester() Requester {
 	return t
 }
 
-func (r *Requester) SendRequest(ctx context.Context, params SendReqeuestParams) (status int, res string, err error) {
+func (r *Requester) SendRequest(ctx context.Context, params *SendRequestParams) (res *APIResponse, err error) {
 	req, err := http.NewRequestWithContext(ctx, params.Method, params.Endpoint, bytes.NewBuffer([]byte(params.Body)))
 	if err != nil {
 		return
@@ -68,11 +74,17 @@ func (r *Requester) SendRequest(ctx context.Context, params SendReqeuestParams) 
 		return
 	}
 
+	res = &APIResponse{}
+
 	defer data.Body.Close()
 	body, err := io.ReadAll(data.Body)
 	if err != nil {
-		return http.StatusInternalServerError, "", fmt.Errorf("failed to read response body")
+		return nil, fmt.Errorf("failed to read response body")
 	}
 
-	return data.StatusCode, string(body), nil
+	res.Headers = data.Header
+	res.Status = data.StatusCode
+	res.Payload = string(body)
+
+	return
 }

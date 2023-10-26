@@ -59,9 +59,9 @@ func decryptRequest(ctx context.Context, payload *dto.PassthroughPayload) (res s
 
 	apireq := &dto.SecurityDecryptPayload{
 		Data:        splitted[0],
-		PartnerID:   structutil.StringToUint64(payload.PartnerID),
+		PartnerID:   structutil.StringToUint64(payload.Headers[inconst.HeaderXPartnerID][0]),
 		Tag:         splitted[1],
-		KeypairHash: payload.KeypairHash,
+		KeypairHash: payload.Headers[inconst.HeaderXSecKeypair][0],
 	}
 
 	bReq, err := json.Marshal(apireq)
@@ -113,31 +113,37 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 		payload.Payload = inres
 	}
 
-	params := svcutil.SendReqeuestParams{
+	params := &svcutil.SendRequestParams{
 		Endpoint: basePath + payload.EndpointPath,
 		Method:   payload.RequestMethod,
 		Body:     payload.Payload,
 	}
 
-	headers := make(map[string]string)
-	headers["x-correlation-id"] = payload.CorrelationID
+	params.Headers = make(map[string]string)
+	for k, v := range payload.Headers {
+		params.Headers[k] = strings.Join(v, ",")
+	}
 
 	caller := svcutil.NewRequester()
-	status, apires, err := caller.SendRequest(ctx, params)
+	svcres, err := caller.SendRequest(ctx, params)
 	if err != nil {
 		logger.Error().Err(err).Msg("failed to send request")
 		return
 	}
 
 	res = &dto.PassthroughResponse{
-		Status:  status,
-		Payload: apires,
-		Headers: headers,
+		Status:  svcres.Status,
+		Payload: svcres.Payload,
+		Headers: make(map[string]string),
+	}
+
+	for k, v := range svcres.Headers {
+		res.Headers[k] = strings.Join(v, ",")
 	}
 
 	if payload.ServiceName == inconst.SVC_PAYMENT {
 		var outres, sk string
-		outres, sk, err = encryptRequest(ctx, structutil.StringToUint64(payload.PartnerID), apires)
+		outres, sk, err = encryptRequest(ctx, structutil.StringToUint64(res.Headers[inconst.HeaderXPartnerID]), res.Payload)
 		if err != nil {
 			logger.Error().Err(err).Send()
 			return

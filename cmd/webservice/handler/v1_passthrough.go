@@ -16,10 +16,7 @@ func HandlePassthroughV1(handler PassthroughV1Handler) echo.HandlerFunc {
 		req := &dto.PassthroughPayload{
 			ServiceName:   c.Param("svc"),
 			EndpointPath:  c.Param("path"),
-			PartnerID:     c.Request().Header.Get("X-Partner-Id"),
-			KeypairHash:   c.Request().Header.Get("X-Sec-Keypair"),
-			CorrelationID: c.Request().Header.Get("X-Correlation-Id"),
-			ExternalID:    c.Request().Header.Get("X-External-Id"),
+			Headers:       c.Request().Header,
 			RequestMethod: c.Request().Method,
 		}
 
