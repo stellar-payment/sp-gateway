@@ -113,7 +113,7 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 	// }
 
 	params := &svcutil.SendRequestParams{
-		Endpoint: fmt.Sprintf("%s/%s/api/%s", basePath, payload.ServiceName, payload.EndpointPath),
+		Endpoint: fmt.Sprintf("%s/%s/%s", basePath, payload.ServiceName, payload.EndpointPath),
 		Method:   payload.RequestMethod,
 		Body:     payload.Payload,
 	}

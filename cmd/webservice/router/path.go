@@ -4,5 +4,5 @@ const (
 	basePath = "/api/v1"
 	PingPath = basePath + "/ping"
 
-	passthroughPath = "/api/:svc/:path"
+	passthroughPath = "/ms/:svc/:path"
 )
