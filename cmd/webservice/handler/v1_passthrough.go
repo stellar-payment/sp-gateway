@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/labstack/echo/v4"
+	"github.com/stellar-payment/sp-gateway/internal/inconst"
 	"github.com/stellar-payment/sp-gateway/internal/util/echttputil"
 	"github.com/stellar-payment/sp-gateway/pkg/dto"
 )
@@ -18,6 +19,10 @@ func HandlePassthroughV1(handler PassthroughV1Handler) echo.HandlerFunc {
 			EndpointPath:  c.Param("path"),
 			Headers:       c.Request().Header,
 			RequestMethod: c.Request().Method,
+		}
+
+		if len(req.Headers[inconst.HeaderXOverrideSec]) != 0 && req.Headers[inconst.HeaderXOverrideSec][0] == "1" {
+			req.OverrideSecurity = true
 		}
 
 		// extract request body

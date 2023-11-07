@@ -20,6 +20,8 @@ type Config struct {
 	FilePath  string
 	RunSince  time.Time
 
+	FFJsonLogger string
+
 	RedisConfig       RedisConfig `json:"redisConfig"`
 	PassthroughConfig PassthroughConfig
 }
@@ -46,9 +48,10 @@ func Init(buildTime, buildVer string) {
 			AccountPath:  os.Getenv("SP_ACCOUNT_PATH"),
 			PaymentPath:  os.Getenv("SP_PAYMENT_PATH"),
 		},
-		BuildVer:  buildVer,
-		BuildTime: buildTime,
-		FilePath:  os.Getenv("FILE_PATH"),
+		BuildVer:     buildVer,
+		BuildTime:    buildTime,
+		FFJsonLogger: os.Getenv("FF_OVERRIDE_JSON_LOGGER"),
+		FilePath:     os.Getenv("FILE_PATH"),
 	}
 
 	if conf.ServiceName == "" {

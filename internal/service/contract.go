@@ -11,11 +11,13 @@ type Service interface {
 	Ping() (pingResponse dto.PublicPingResponse)
 
 	PassthroughV1Request(context.Context, *dto.PassthroughPayload) (*dto.PassthroughResponse, error)
+	UpsertSecureEndpoint(service string, routes []string)
 }
 
 type service struct {
-	conf       *serviceConfig
-	repository repository.Repository
+	conf             *serviceConfig
+	repository       repository.Repository
+	secureRouteStore map[string]map[string]struct{}
 }
 
 type serviceConfig struct {
@@ -27,7 +29,8 @@ type NewServiceParams struct {
 
 func NewService(params *NewServiceParams) Service {
 	return &service{
-		conf:       &serviceConfig{},
-		repository: params.Repository,
+		conf:             &serviceConfig{},
+		repository:       params.Repository,
+		secureRouteStore: make(map[string]map[string]struct{}),
 	}
 }

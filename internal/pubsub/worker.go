@@ -2,7 +2,7 @@ package pubsub
 
 import (
 	"context"
-	"fmt"
+	"strings"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
@@ -12,38 +12,49 @@ import (
 	"github.com/stellar-payment/sp-gateway/internal/util/ctxutil"
 )
 
-var (
-	tagLoggerPBListen = "[PubSub-Listen]"
-)
-
-type FilePubSub struct {
-	logger  zerolog.Logger
-	redis   *redis.Client
-	service service.Service
+type EventPubSub struct {
+	logger       zerolog.Logger
+	redis        *redis.Client
+	service      service.Service
+	secureRoutes []string
 }
 
-type NewFilePubSubParams struct {
-	Logger  zerolog.Logger
-	Redis   *redis.Client
-	Service service.Service
+type NewEventPubSubParams struct {
+	Logger       zerolog.Logger
+	Redis        *redis.Client
+	Service      service.Service
+	SecureRoutes []string
 }
 
-func NewFileSub(params NewFilePubSubParams) *FilePubSub {
-	return &FilePubSub{
-		logger:  params.Logger,
-		redis:   params.Redis,
-		service: params.Service,
+func NewEventPubSub(params *NewEventPubSubParams) *EventPubSub {
+	return &EventPubSub{
+		logger:       params.Logger,
+		redis:        params.Redis,
+		service:      params.Service,
+		secureRoutes: params.SecureRoutes,
 	}
 }
 
-func (pb *FilePubSub) Listen() {
+func (pb *EventPubSub) Listen() {
 	ctx := context.Background()
 	ctx = ctxutil.WrapCtx(ctx, inconst.SCOPE_CTX_KEY, indto.UserScopeMap{})
 
-	subscriber := pb.redis.Subscribe(ctx, "")
+	subscriber := pb.redis.Subscribe(ctx, inconst.TOPIC_BROADCAST_SECURE_ROUTE)
+
+	if err := pb.redis.Publish(context.Background(), inconst.TOPIC_REQUEST_SECURE_ROUTE, nil).Err(); err != nil {
+		pb.logger.Error().Err(err).Send()
+	}
 
 	defer subscriber.Close()
 	for msg := range subscriber.Channel() {
-		fmt.Print(msg)
+		switch msg.Channel {
+		case inconst.TOPIC_BROADCAST_SECURE_ROUTE:
+			splitted := strings.Split(msg.Payload, ",")
+			svcname := splitted[0]
+			routes := splitted[1:]
+
+			pb.service.UpsertSecureEndpoint(svcname, routes)
+			continue
+		}
 	}
 }

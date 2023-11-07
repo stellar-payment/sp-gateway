@@ -14,4 +14,5 @@ const (
 	HeaderXCorrelationID = "X-Correlation-ID"
 	HeaderXExternalID    = "X-External-ID"
 	HeaderXRequestID     = "X-Request-ID"
+	HeaderXOverrideSec   = "X-Override-Sec"
 )
