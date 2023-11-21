@@ -35,7 +35,7 @@ func encryptRequest(ctx context.Context, partnerID uint64, data string) (res str
 
 	caller := apiutil.NewRequester[dto.SecurityEncryptResponse]()
 	apires, err := caller.SendRequest(ctx,
-		conf.PassthroughConfig.SecurityPath+inconst.SEC_ENCRYPT,
+		conf.PassthroughConfig.SecurityPath+"/security/api/v1"+inconst.SEC_ENCRYPT,
 		http.MethodPost,
 		nil,
 		bytes.NewBuffer(bReq),
@@ -73,7 +73,7 @@ func decryptRequest(ctx context.Context, payload *dto.PassthroughPayload) (res s
 
 	caller := apiutil.NewRequester[dto.SecurityDecryptResponse]()
 	apires, err := caller.SendRequest(ctx,
-		conf.PassthroughConfig.SecurityPath+inconst.SEC_DECRYPT,
+		conf.PassthroughConfig.SecurityPath+"/security/api/v1"+inconst.SEC_DECRYPT,
 		http.MethodPost,
 		nil,
 		bytes.NewBuffer(bReq),
