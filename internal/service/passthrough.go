@@ -111,7 +111,7 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 		}
 	}
 
-	if isSecuredRoute {
+	if isSecuredRoute && (payload.RequestMethod != http.MethodGet && payload.RequestMethod != http.MethodOptions) {
 		var inres string
 		inres, err = decryptRequest(ctx, payload)
 		if err != nil {
