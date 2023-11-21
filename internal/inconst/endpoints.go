@@ -6,8 +6,8 @@ const (
 	SVC_PAYMENT  = "payment"
 	SVC_SECURITY = "security"
 
-	SEC_ENCRYPT = "payload/encrypt"
-	SEC_DECRYPT = "payload/decrypt"
+	SEC_ENCRYPT = "/payload/encrypt"
+	SEC_DECRYPT = "/payload/decrypt"
 
 	HeaderXPartnerID     = "X-Partner-ID"
 	HeaderXSecKeypair    = "X-Sec-Keypair"
