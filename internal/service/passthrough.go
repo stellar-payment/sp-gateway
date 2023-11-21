@@ -12,13 +12,12 @@ import (
 	"github.com/stellar-payment/sp-gateway/internal/config"
 	"github.com/stellar-payment/sp-gateway/internal/inconst"
 	"github.com/stellar-payment/sp-gateway/internal/util/apiutil"
-	"github.com/stellar-payment/sp-gateway/internal/util/structutil"
 	"github.com/stellar-payment/sp-gateway/internal/util/svcutil"
 	"github.com/stellar-payment/sp-gateway/pkg/dto"
 	"github.com/stellar-payment/sp-gateway/pkg/errs"
 )
 
-func encryptRequest(ctx context.Context, partnerID uint64, data string) (res string, sk string, err error) {
+func encryptRequest(ctx context.Context, partnerID string, data string) (res string, sk string, err error) {
 	logger := log.Ctx(ctx)
 	conf := config.Get()
 
@@ -60,7 +59,7 @@ func decryptRequest(ctx context.Context, payload *dto.PassthroughPayload) (res s
 
 	apireq := &dto.SecurityDecryptPayload{
 		Data:        splitted[0],
-		PartnerID:   structutil.StringToUint64(payload.Headers[inconst.HeaderXPartnerID][0]),
+		PartnerID:   payload.Headers[inconst.HeaderXPartnerID][0],
 		Tag:         splitted[1],
 		KeypairHash: payload.Headers[inconst.HeaderXSecKeypair][0],
 	}
@@ -152,7 +151,7 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 
 	if isSecuredRoute {
 		var outres, sk string
-		outres, sk, err = encryptRequest(ctx, structutil.StringToUint64(res.Headers[inconst.HeaderXPartnerID]), res.Payload)
+		outres, sk, err = encryptRequest(ctx, res.Headers[inconst.HeaderXPartnerID], res.Payload)
 		if err != nil {
 			logger.Error().Err(err).Send()
 			return

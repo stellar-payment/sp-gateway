@@ -2,7 +2,7 @@ package dto
 
 type SecurityEncryptPayload struct {
 	Data      string `json:"data"`
-	PartnerID uint64 `json:"partner_id"`
+	PartnerID string `json:"partner_id"`
 }
 
 type SecurityEncryptResponse struct {
@@ -13,7 +13,7 @@ type SecurityEncryptResponse struct {
 
 type SecurityDecryptPayload struct {
 	Data        string `json:"data"`
-	PartnerID   uint64 `json:"partner_id"`
+	PartnerID   string `json:"partner_id"`
 	Tag         string `json:"tag"`
 	KeypairHash string `json:"keypair_hash"`
 }
