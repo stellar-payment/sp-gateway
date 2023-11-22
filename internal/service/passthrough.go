@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,12 +18,12 @@ import (
 	"github.com/stellar-payment/sp-gateway/pkg/errs"
 )
 
-func encryptRequest(ctx context.Context, partnerID string, data string) (res string, sk string, err error) {
+func encryptRequest(ctx context.Context, partnerID string, data string) (res *dto.SecurityEncryptResponse, err error) {
 	logger := log.Ctx(ctx)
 	conf := config.Get()
 
 	apireq := &dto.SecurityEncryptPayload{
-		Data:      data,
+		Data:      base64.StdEncoding.EncodeToString([]byte(data)),
 		PartnerID: partnerID,
 	}
 
@@ -31,6 +32,8 @@ func encryptRequest(ctx context.Context, partnerID string, data string) (res str
 		logger.Error().Err(err).Msg("failed to marshal decrypt payload")
 		return
 	}
+
+	fmt.Println(string(bReq))
 
 	caller := apiutil.NewRequester[dto.SecurityEncryptResponse]()
 	apires, err := caller.SendRequest(ctx,
@@ -44,7 +47,7 @@ func encryptRequest(ctx context.Context, partnerID string, data string) (res str
 		return
 	}
 
-	return strings.Join([]string{apires.Data, apires.Tag}, "."), apires.SecretKey, nil
+	return apires, nil
 }
 
 func decryptRequest(ctx context.Context, payload *dto.PassthroughPayload) (res string, err error) {
@@ -150,15 +153,18 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 	}
 
 	if isSecuredRoute {
-		var outres, sk string
-		outres, sk, err = encryptRequest(ctx, res.Headers[inconst.HeaderXPartnerID], res.Payload)
+		outres, err := encryptRequest(ctx, payload.Headers[inconst.HeaderXPartnerID][0], res.Payload)
 		if err != nil {
 			logger.Error().Err(err).Send()
-			return
+			return nil, err
 		}
 
-		res.Payload = outres
-		res.Headers["x-sec-keypair"] = sk
+		if out, err := json.Marshal(outres); err != nil {
+			logger.Error().Err(err).Send()
+			return nil, err
+		} else {
+			res.Payload = string(out)
+		}
 	}
 
 	return

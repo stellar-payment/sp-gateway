@@ -9,10 +9,10 @@ const (
 	SEC_ENCRYPT = "/payload/encrypt"
 	SEC_DECRYPT = "/payload/decrypt"
 
-	HeaderXPartnerID     = "X-Partner-ID"
+	HeaderXPartnerID     = "X-Partner-Id"
 	HeaderXSecKeypair    = "X-Sec-Keypair"
-	HeaderXCorrelationID = "X-Correlation-ID"
-	HeaderXExternalID    = "X-External-ID"
-	HeaderXRequestID     = "X-Request-ID"
+	HeaderXCorrelationID = "X-Correlation-Id"
+	HeaderXExternalID    = "X-External-Id"
+	HeaderXRequestID     = "X-Request-Id"
 	HeaderXOverrideSec   = "X-Override-Sec"
 )

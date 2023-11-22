@@ -11,6 +11,12 @@ import (
 	"golang.org/x/time/rate"
 )
 
+// Wrapper Type for Rust's Sec
+type BaseResponse[T any] struct {
+	Data   *T          `json:"data"`
+	Errors interface{} `json:"error"`
+}
+
 // Rate Limiter
 type Transport struct {
 	base    http.RoundTripper
@@ -69,10 +75,11 @@ func (r *Requester[T]) SendRequest(ctx context.Context, endpoint string, method 
 		return nil, fmt.Errorf("failed to process request, got: %s", data.Status)
 	}
 
-	err = json.NewDecoder(data.Body).Decode(res)
+	temp := &BaseResponse[T]{}
+	err = json.NewDecoder(data.Body).Decode(temp)
 	if err != nil {
 		return
 	}
 
-	return
+	return temp.Data, nil
 }
