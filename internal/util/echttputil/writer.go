@@ -2,6 +2,7 @@ package echttputil
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/stellar-payment/sp-gateway/pkg/dto"
@@ -21,6 +22,7 @@ func WritePassthroughResponse(ec echo.Context, res *dto.PassthroughResponse) err
 	}
 
 	ec.Response().Header().Set(echo.HeaderContentType, "application/json; charset=UTF-8")
+	ec.Response().Header().Set(echo.HeaderContentLength, strconv.Itoa(len(res.Payload)))
 	return ec.String(res.Status, res.Payload)
 }
 

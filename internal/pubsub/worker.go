@@ -49,6 +49,7 @@ func (pb *EventPubSub) Listen() {
 	for msg := range subscriber.Channel() {
 		switch msg.Channel {
 		case inconst.TOPIC_BROADCAST_SECURE_ROUTE:
+			pb.logger.Info().Str("event", msg.Channel).Str("msg", msg.Payload).Msg("incoming secure route msg")
 			splitted := strings.Split(msg.Payload, ",")
 			svcname := splitted[0]
 			routes := splitted[1:]

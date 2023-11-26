@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	"github.com/labstack/echo/v4"
@@ -37,6 +38,7 @@ func HandlePassthroughV1(handler PassthroughV1Handler) echo.HandlerFunc {
 			return echttputil.WriteErrorResponse(c, err)
 		}
 
+		fmt.Println(res)
 		return echttputil.WritePassthroughResponse(c, res)
 	}
 }

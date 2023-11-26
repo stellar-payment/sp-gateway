@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"reflect"
 	"strconv"
+
+	"golang.org/x/exp/constraints"
 )
 
 func ParseTag[T any]() []string {
@@ -20,9 +22,9 @@ func ParseTag[T any]() []string {
 	return res
 }
 
-func StringToInt64(s string) (res int64) {
-	res, _ = strconv.ParseInt(s, 10, 64)
-	return
+func StringToInt64[T constraints.Integer](s string) (res T) {
+	val, _ := strconv.ParseInt(s, 10, 64)
+	return (T)(val)
 }
 
 func StringToUint64(s string) (res uint64) {
