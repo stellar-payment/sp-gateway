@@ -87,7 +87,8 @@ func decryptRequest(ctx context.Context, payload *dto.PassthroughPayload) (res s
 		return
 	}
 
-	return apires.Data, nil
+	data, _ := base64.StdEncoding.DecodeString(apires.Data)
+	return string(data), nil
 }
 
 func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.PassthroughPayload) (res *dto.PassthroughResponse, err error) {
