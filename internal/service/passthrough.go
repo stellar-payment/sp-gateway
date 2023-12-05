@@ -55,15 +55,15 @@ func decryptRequest(ctx context.Context, payload *dto.PassthroughPayload) (res s
 	conf := config.Get()
 
 	splitted := strings.Split(payload.Payload, ".")
-	if len(splitted) != 2 {
-		logger.Error().Err(errs.ErrBadRequest).Msg("payload must consist of 2 dot-separated data")
+	if len(splitted) != 3 {
+		logger.Error().Err(errs.ErrBadRequest).Msg("payload must consist of 3 dot-separated data")
 		return "", errs.ErrBadRequest
 	}
 
 	apireq := &dto.SecurityDecryptPayload{
-		Data:        splitted[0],
+		Data:        fmt.Sprintf("%s.%s", splitted[0], splitted[1]),
 		PartnerID:   payload.Headers[inconst.HeaderXPartnerID][0],
-		Tag:         splitted[1],
+		Tag:         splitted[2],
 		KeypairHash: payload.Headers[inconst.HeaderXSecKeypair][0],
 	}
 
