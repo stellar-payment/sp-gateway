@@ -73,6 +73,8 @@ func decryptRequest(ctx context.Context, payload *dto.PassthroughPayload) (res s
 		return
 	}
 
+	logger.Debug().Any("body", apireq).Send()
+
 	caller := apiutil.NewRequester[dto.SecurityDecryptResponse]()
 	apires, err := caller.SendRequest(ctx,
 		conf.PassthroughConfig.SecurityPath+"/security/api/v1"+inconst.SEC_DECRYPT,
