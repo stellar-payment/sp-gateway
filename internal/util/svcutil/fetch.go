@@ -74,9 +74,11 @@ func (r *Requester) SendRequest(ctx context.Context, params *SendRequestParams) 
 
 	queries := req.URL.Query()
 	for k, v := range params.Queries {
-		req.URL.Query().Add(k, strings.Join(v, ","))
+		queries.Add(k, strings.Join(v, ","))
 	}
 	req.URL.RawQuery = queries.Encode()
+
+	fmt.Println(req.URL)
 
 	data, err := r.Client.Do(req)
 	if err != nil {
