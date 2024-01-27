@@ -33,8 +33,6 @@ func encryptRequest(ctx context.Context, partnerID string, data string) (res *dt
 		return
 	}
 
-	fmt.Println(string(bReq))
-
 	caller := apiutil.NewRequester[dto.SecurityEncryptResponse]()
 	apires, err := caller.SendRequest(ctx,
 		conf.PassthroughConfig.SecurityPath+"/security/api/v1"+inconst.SEC_ENCRYPT,
@@ -72,8 +70,6 @@ func decryptRequest(ctx context.Context, payload *dto.PassthroughPayload) (res s
 		logger.Error().Err(err).Msg("failed to marshal decrypt payload")
 		return
 	}
-
-	logger.Debug().Any("body", apireq).Send()
 
 	caller := apiutil.NewRequester[dto.SecurityDecryptResponse]()
 	apires, err := caller.SendRequest(ctx,
@@ -162,12 +158,13 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 			return nil, err
 		}
 
-		if out, err := json.Marshal(outres); err != nil {
+		out, err := json.Marshal(outres)
+		if err != nil {
 			logger.Error().Err(err).Send()
 			return nil, err
-		} else {
-			res.Payload = string(out)
 		}
+
+		res.Payload = string(out)
 	}
 
 	return
