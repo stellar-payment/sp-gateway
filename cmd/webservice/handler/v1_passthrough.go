@@ -18,6 +18,7 @@ func HandlePassthroughV1(handler PassthroughV1Handler) echo.HandlerFunc {
 		req := &dto.PassthroughPayload{
 			ServiceName:   c.Param("svc"),
 			EndpointPath:  c.Param("path"),
+			Queries:       c.QueryParams(),
 			Headers:       c.Request().Header,
 			RequestMethod: c.Request().Method,
 		}

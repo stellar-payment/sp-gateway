@@ -127,6 +127,7 @@ func (s *service) PassthroughV1Request(ctx context.Context, payload *dto.Passthr
 		Endpoint: fmt.Sprintf("%s/%s/%s", basePath, payload.ServiceName, payload.EndpointPath),
 		Method:   payload.RequestMethod,
 		Body:     payload.Payload,
+		Queries:  payload.Queries,
 	}
 
 	params.Headers = make(map[string]string)

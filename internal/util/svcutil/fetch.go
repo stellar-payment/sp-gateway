@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 
 	"golang.org/x/time/rate"
@@ -33,6 +35,7 @@ type SendRequestParams struct {
 	Endpoint string
 	Method   string
 	Headers  map[string]string
+	Queries  url.Values
 	Body     string
 }
 
@@ -67,6 +70,10 @@ func (r *Requester) SendRequest(ctx context.Context, params *SendRequestParams) 
 
 	for k, v := range params.Headers {
 		req.Header.Add(k, v)
+	}
+
+	for k, v := range params.Queries {
+		req.URL.Query().Add(k, strings.Join(v, ","))
 	}
 
 	data, err := r.Client.Do(req)
