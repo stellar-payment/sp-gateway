@@ -53,7 +53,7 @@ type Requester struct {
 func NewRequester() Requester {
 	t := Requester{
 		Client: http.Client{
-			Transport: &Transport{base: http.DefaultTransport, limiter: rate.NewLimiter(rate.Limit(50), 1)},
+			Transport: &Transport{base: http.DefaultTransport, limiter: rate.NewLimiter(rate.Inf, 1)},
 		},
 	}
 	return t
@@ -77,8 +77,6 @@ func (r *Requester) SendRequest(ctx context.Context, params *SendRequestParams) 
 		queries.Add(k, strings.Join(v, ","))
 	}
 	req.URL.RawQuery = queries.Encode()
-
-	fmt.Println(req.URL)
 
 	data, err := r.Client.Do(req)
 	if err != nil {
